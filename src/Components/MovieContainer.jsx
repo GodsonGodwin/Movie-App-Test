@@ -1,19 +1,12 @@
-import React from "react";
-import { Box, Container, chakra, Image, Text, Input } from "@chakra-ui/react";
+import React, {useState} from "react";
+import { Box, chakra, Text, Input } from "@chakra-ui/react";
 import { Heading } from "@chakra-ui/react";
-
-const MovieWrapper = chakra(Box, {
-  baseStyle: {
-    width: "100%",
-    display: "flex",
-    alignItems: "center",
-    background: "red",
-  },
-});
+import MovieCard from "./MovieCard";
+import axios from "axios";
 
 const SearchWrapper = chakra(Box, {
   baseStyle: {
-    width: "100%",
+    
     height: { base: "59", md: "89px" },
     margin: {
       base: "56px 27px 33px 27px",
@@ -27,13 +20,7 @@ const SearchWrapper = chakra(Box, {
   },
 });
 
-const MovieList = chakra(Box, {
-  baseStyle: {
-    width: { base: "273", md: "490px" },
-    height: { base: "72px", md: "282px" },
-    margin: { base: "0", lg: "0 77px" },
-  },
-});
+
 
 const SearchTitle = chakra(Text, {
   baseStyle: {
@@ -42,7 +29,7 @@ const SearchTitle = chakra(Text, {
     lineHeight: { base: "21px", md: "31px" },
     flex: "none",
     order: "0",
-    flexGrow: "0",
+    flexGgrow: "0",
     color: "#000000",
   },
 });
@@ -54,24 +41,101 @@ const SearchInput = chakra(Input, {
     height: { base: "34px", md: "52px" },
     flex: "none",
     order: { base: "1", md: "0" },
-    flexGrow: "0",
+    flexGgrow: "0",
     outline: "none",
     width: "100%",
   },
 });
 
+  const Category = chakra(Box, {
+    baseStyle: {
+      margin: {
+        base: "0px 0px 33px 27px",
+        md: "0px 0px 48px 77px",
+        lg: "0px 0px 48px 77px",
+      },
+      
+    },
+  });
+
+  
+
+  const MovieTitle = chakra(Text, {
+    baseStyle: {
+      fontWeight: "400",
+      fontSize: { base: "18px", md: "24px" },
+      lineHeight: { base: "21px", md: "31px" },
+      marginBottom:{base:'26px', md:'18px'},
+      display: 'flex',
+      alignItems: 'center',
+      textAlign: 'center',
+      color: '#FFFFFF'
+    },
+  });
+
+  const MovieItem= chakra(Box, {
+    baseStyle: {
+      
+        display: 'flex',
+        flexDirection: 'row',
+        height:{base:'200px', md:'300px',},
+        alignItems: 'flex-start',
+        padding: '0px',
+        gap: '13px',
+        overflowX:'auto'
+        
+        
+    },
+  })
+
 const MovieContainer = () => {
+
+    const [search, setSearch] = useState();
+  const [inputTimeOut, setInputTimeOut] = useState();
+  const [movieResult, setMovieResult] = useState([]);
+ 
+    const API_KEY = "a625269d";
+  const makeAPICall = async (userSearchInput) => {
+    const response = await axios.get(
+      `http://www.omdbapi.com/?s=${userSearchInput}&apikey=${API_KEY}`
+    );
+
+    setMovieResult(response.data.Search);
+    console.log(response.data.Search)
+  };
+
+    const handleChange = (e) => {
+        clearTimeout(inputTimeOut);
+        setSearch(e.target.value);
+        const timeOutInput = setTimeout(() => makeAPICall(search), 500);
+        setInputTimeOut(timeOutInput);
+      };
   return (
-    <MovieWrapper>
+      <Box style={{width:'100%'}}>
+   
       <SearchWrapper>
         <SearchTitle>Search</SearchTitle>
-        <SearchInput  />
+        <SearchInput value={search} onChange={handleChange}/>
       </SearchWrapper>
+      
 
-      <MovieList>
+      
+          <Category>
+        <MovieTitle>Movie Category</MovieTitle>
+        
+        <MovieItem>
+        {movieResult?.length ? movieResult.map((movie, index) => <MovieCard key={movie.imdbID} movie = {movie} />) : <Heading  style={{color:"black", display:'flex', margin:'0 auto', fontSize:'25px'}}>No movie search</Heading> }
+          </MovieItem>
+          </Category>
+
           
-        </MovieList>
-    </MovieWrapper>
+
+
+       
+        
+    
+   
+    </Box>
   );
 };
 

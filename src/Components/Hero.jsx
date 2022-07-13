@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Container, chakra, Image } from "@chakra-ui/react";
+import { Box, chakra } from "@chakra-ui/react";
 import { Heading } from "@chakra-ui/react";
 
 const HeroWrapper = chakra(Box, {

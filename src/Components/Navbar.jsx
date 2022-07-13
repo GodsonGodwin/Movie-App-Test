@@ -1,6 +1,5 @@
 import React from 'react'
-import { Box, Container, chakra, Image } from '@chakra-ui/react'
-import { Heading } from '@chakra-ui/react'
+import { Box, chakra, Image } from '@chakra-ui/react'
 
 
 const NavWrapper = chakra(Box, {
