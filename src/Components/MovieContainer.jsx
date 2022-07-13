@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Container, chakra, Image } from "@chakra-ui/react";
+import { Box, Container, chakra, Image, Text, Input } from "@chakra-ui/react";
 import { Heading } from "@chakra-ui/react";
 
 const MovieWrapper = chakra(Box, {
@@ -7,58 +7,72 @@ const MovieWrapper = chakra(Box, {
     width: "100%",
     display: "flex",
     alignItems: "center",
+    background: "red",
   },
 });
 
-const Overlay = chakra(Box, {
+const SearchWrapper = chakra(Box, {
   baseStyle: {
-    background: "rgba(0, 0, 0, 0.35)",
     width: "100%",
-    height: { base: "257", md: "550px" },
-    backgroundSize: "cover",
-    objectFit: "cover",
-    backgroundPosition: "center",
+    height: { base: "59", md: "89px" },
+    margin: {
+      base: "56px 27px 33px 27px",
+      md: "63px 77px 48px 77px",
+      lg: "63px 57px 48px 77px",
+    },
     display: "flex",
-    alignItems: "center",
-    justifyContent: { base: "center", lg: "flex-start" },
+    flexDirection: "column",
+    alignItems: "flex-start",
+    gap: "4px",
   },
 });
 
-const TitleWrapp = chakra(Box, {
+const MovieList = chakra(Box, {
   baseStyle: {
     width: { base: "273", md: "490px" },
-    height: {base:'72px', md:'282px'},
-    margin: {base:'0', lg:'0 77px'},
+    height: { base: "72px", md: "282px" },
+    margin: { base: "0", lg: "0 77px" },
   },
 });
 
-const Title = chakra(Heading, {
+const SearchTitle = chakra(Text, {
   baseStyle: {
-    fontWeight: "700",
-    fontSize: {base:'28px', md:'72px'},
-    lineHeight: {base:'36px', md:'94px'},
-    letterSpacing: "0.05em",
-    color: "#FFFFFF",
-    textAlign:{base:'center', lg:'left'}
+    fontWeight: "400",
+    fontSize: { base: "16px", md: "24px" },
+    lineHeight: { base: "21px", md: "31px" },
+    flex: "none",
+    order: "0",
+    flexGrow: "0",
+    color: "#000000",
   },
 });
 
-const Hero = () => {
+const SearchInput = chakra(Input, {
+  baseStyle: {
+    border: "1px solid #000000",
+    borderRadius: "none",
+    height: { base: "34px", md: "52px" },
+    flex: "none",
+    order: { base: "1", md: "0" },
+    flexGrow: "0",
+    outline: "none",
+    width: "100%",
+  },
+});
+
+const MovieContainer = () => {
   return (
     <MovieWrapper>
-
       <SearchWrapper>
-
+        <SearchTitle>Search</SearchTitle>
+        <SearchInput  />
       </SearchWrapper>
-      
-        <TitleWrapp>
-          <Title>
-            Watch something incredible.
-          </Title>
-        </TitleWrapp>
-      
+
+      <MovieList>
+          
+        </MovieList>
     </MovieWrapper>
   );
 };
 
-export default Hero;
+export default MovieContainer;
