@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { Box, chakra, Text, Input } from "@chakra-ui/react";
 import { Heading } from "@chakra-ui/react";
 import MovieCard from "./MovieCard";
@@ -6,7 +6,6 @@ import axios from "axios";
 
 const SearchWrapper = chakra(Box, {
   baseStyle: {
-    
     height: { base: "59", md: "89px" },
     margin: {
       base: "56px 27px 33px 27px",
@@ -19,8 +18,6 @@ const SearchWrapper = chakra(Box, {
     gap: "4px",
   },
 });
-
-
 
 const SearchTitle = chakra(Text, {
   baseStyle: {
@@ -47,94 +44,106 @@ const SearchInput = chakra(Input, {
   },
 });
 
-  const Category = chakra(Box, {
-    baseStyle: {
-      margin: {
-        base: "0px 0px 33px 27px",
-        md: "0px 0px 48px 77px",
-        lg: "0px 0px 48px 77px",
-      },
-      
+const Category = chakra(Box, {
+  baseStyle: {
+    margin: {
+      base: "0px 0px 33px 27px",
+      md: "0px 0px 48px 77px",
+      lg: "0px 0px 48px 77px",
     },
-  });
+  },
+});
 
-  
+const MovieTitle = chakra(Text, {
+  baseStyle: {
+    fontWeight: "400",
+    fontSize: { base: "18px", md: "24px" },
+    lineHeight: { base: "21px", md: "31px" },
+    marginBottom: { base: "26px", md: "18px" },
+    display: "flex",
+    alignItems: "center",
+    textAlign: "center",
+    color: "#000000",
+  },
+});
 
-  const MovieTitle = chakra(Text, {
-    baseStyle: {
-      fontWeight: "400",
-      fontSize: { base: "18px", md: "24px" },
-      lineHeight: { base: "21px", md: "31px" },
-      marginBottom:{base:'26px', md:'18px'},
-      display: 'flex',
-      alignItems: 'center',
-      textAlign: 'center',
-      color: '#FFFFFF'
-    },
-  });
-
-  const MovieItem= chakra(Box, {
-    baseStyle: {
-      
-        display: 'flex',
-        flexDirection: 'row',
-        height:{base:'200px', md:'300px',},
-        alignItems: 'flex-start',
-        padding: '0px',
-        gap: '13px',
-        overflowX:'auto'
-        
-        
-    },
-  })
+const MovieItem = chakra(Box, {
+  baseStyle: {
+    display: "flex",
+    flexDirection: "row",
+    height: { base: "220px", md: "320px" },
+    alignItems: "flex-start",
+    padding: "0px",
+    gap: "13px",
+    overflowX: "auto",
+  },
+});
 
 const MovieContainer = () => {
-
-    const [search, setSearch] = useState();
+  const [search, setSearch] = useState();
   const [inputTimeOut, setInputTimeOut] = useState();
-  const [movieResult, setMovieResult] = useState([]);
- 
-    const API_KEY = "a625269d";
+  const [movieResult, setMovieResult] = useState(null);
+
+  const API_KEY = "a625269d";
   const makeAPICall = async (userSearchInput) => {
     const response = await axios.get(
       `http://www.omdbapi.com/?s=${userSearchInput}&apikey=${API_KEY}`
     );
 
-    setMovieResult(response.data.Search);
-    console.log(response.data.Search)
+    console.log({ response });
+
+    const result = response.data?.Search || [];
+
+    const series = result.filter((item) => item.Type === "series");
+    const movies = result.filter((item) => item.Type === "movie");
+
+    setMovieResult({ series, movies });
   };
 
-    const handleChange = (e) => {
-        clearTimeout(inputTimeOut);
-        setSearch(e.target.value);
-        const timeOutInput = setTimeout(() => makeAPICall(search), 500);
-        setInputTimeOut(timeOutInput);
-      };
+  const handleChange = (e) => {
+    clearTimeout(inputTimeOut);
+    setSearch(e.target.value);
+    const timeOutInput = setTimeout(() => makeAPICall(search), 500);
+    setInputTimeOut(timeOutInput);
+  };
+
+  const movies = movieResult?.movies || [];
+  const series = movieResult?.series || [];
+
   return (
-      <Box style={{width:'100%'}}>
-   
+    <Box style={{ width: "100%" }}>
       <SearchWrapper>
         <SearchTitle>Search</SearchTitle>
-        <SearchInput value={search} onChange={handleChange}/>
+        <SearchInput value={search} onChange={handleChange} />
       </SearchWrapper>
-      
 
-      
-          <Category>
-        <MovieTitle>Movie Category</MovieTitle>
-        
+      {!movies.length && !series.length && movieResult ? <Heading style={{margin:'30px auto', fontSize:'20px', textAlign:'center'}}>No result found</Heading> : 
+      <Box>
+          {movies.length > 0 && <Category>
+        <MovieTitle>Category(Movies)</MovieTitle>
+
         <MovieItem>
-        {movieResult?.length ? movieResult.map((movie, index) => <MovieCard key={movie.imdbID} movie = {movie} />) : <Heading  style={{color:"black", display:'flex', margin:'0 auto', fontSize:'25px'}}>No movie search</Heading> }
-          </MovieItem>
-          </Category>
+          {movies.length && (
+            movies.map((movie) => (
+              <MovieCard key={movie.imdbID} movie={movie} />
+            ))
+          )}
+        </MovieItem>
+      </Category>}
 
-          
+     {series.length > 0 &&  <Category>
+        <MovieTitle>Category(Series)</MovieTitle>
 
-
-       
-        
-    
-   
+        <MovieItem>
+          {series.length && (
+            series.map((movie) => (
+              <MovieCard key={movie.imdbID} movie={movie} />
+            ))
+          ) }
+        </MovieItem>
+      </Category> }
+      </Box>}
+     
     </Box>
   );
 };
